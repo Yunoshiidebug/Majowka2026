@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Sanok → Olsztyn</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    background: linear-gradient(135deg, #000000, #2f2f2f);
+    color: white;
+    text-align: center;
+  }
+
+  .title {
+    font-size: 64px;
+    font-weight: 800;
+    color: black;
+    -webkit-text-stroke: 2px white;
+    margin-bottom: 20px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    margin-bottom: 25px;
+    color: #dddddd;
+    letter-spacing: 1px;
+  }
+
+  .timer-main {
+    font-size: 28px;
+    color: #00ff88;
+    -webkit-text-stroke: 1px white;
+    margin-bottom: 10px;
+  }
+
+  .timer-detail {
+    font-size: 20px;
+    color: #00ff88;
+    -webkit-text-stroke: 0.5px white;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="title">
+  Sanok ➡️➡️➡️➡️ Olsztyn
+</div>
+
+<div class="subtitle">
+  [ pozostało do spotkanka ]
+</div>
+
+<div class="timer-main" id="timerMain">
+  Ładowanie...
+</div>
+
+<div class="timer-detail" id="timerDetail">
+</div>
+
+<script>
+  const targetDate = new Date(2026, 5, 1, 12, 0);
+
+  function updateTimer() {
+    const now = new Date();
+    const diff = targetDate - now;
+
+    if (diff <= 0) {
+      document.getElementById("timerMain").innerText = "Czas minął!";
+      document.getElementById("timerDetail").innerText = "";
+      return;
+    }
+
+    const totalMinutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const remHours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const remMinutes = Math.floor((diff / (1000 * 60)) % 60);
+
+    document.getElementById("timerMain").innerText =
+      `Zostało ${hours} godzin i ${minutes} minut`;
+
+    document.getElementById("timerDetail").innerText =
+      `Zostało ${days} dni, ${remHours}h ${remMinutes}min`;
+  }
+
+  updateTimer();
+  setInterval(updateTimer, 1000);
+</script>
+
+</body>
+</html>
