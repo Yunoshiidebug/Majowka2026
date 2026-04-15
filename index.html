@@ -39,15 +39,17 @@
 
   .timer-main {
     font-size: 28px;
-    color: #00ff88;
+    color: #66ffcc;
     -webkit-text-stroke: 1px white;
+    text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88;
     margin-bottom: 10px;
   }
 
   .timer-detail {
     font-size: 20px;
-    color: #00ff88;
+    color: #33ff99;
     -webkit-text-stroke: 0.5px white;
+    text-shadow: 0 0 6px #00ff88;
   }
 </style>
 </head>
@@ -70,7 +72,7 @@
 </div>
 
 <script>
-  const targetDate = new Date(2026, 5, 1, 12, 0);
+  const targetDate = new Date(2026, 3, 29, 10, 30);
 
   function updateTimer() {
     const now = new Date();
@@ -89,12 +91,13 @@
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const remHours = Math.floor((diff / (1000 * 60 * 60)) % 24);
     const remMinutes = Math.floor((diff / (1000 * 60)) % 60);
+    const remSeconds = Math.floor((diff / 1000) % 60); // 🔥 sekundy
 
     document.getElementById("timerMain").innerText =
       `Zostało ${hours} godzin i ${minutes} minut`;
 
     document.getElementById("timerDetail").innerText =
-      `Zostało ${days} dni, ${remHours}h ${remMinutes}min`;
+      `Zostało ${days} dni, ${remHours}h ${remMinutes}min ${remSeconds}s`;
   }
 
   updateTimer();
