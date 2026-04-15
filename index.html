@@ -8,82 +8,34 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Pacifico&display=swap" rel="stylesheet">
 
 <style>
-  body {
+  html, body {
     margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
     font-family: 'Orbitron', sans-serif;
     background: url("https://i.imgur.com/xju9V1k.jpeg") center/cover no-repeat;
-    overflow: hidden;
     color: white;
   }
 
   body::before {
     content: "";
-    position: absolute;
+    position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.55);
+    background: rgba(0,0,0,0.65);
     z-index: 0;
   }
 
-  /* ✨ PULS (delikatny) */
-  @keyframes neonPulse {
-    0% {
-      filter: drop-shadow(0 0 1px #00ff66)
-              drop-shadow(0 0 2px #00cc55);
-      transform: scale(1);
-    }
-    50% {
-      filter: drop-shadow(0 0 3px #00ff66)
-              drop-shadow(0 0 5px #00cc55);
-      transform: scale(1.01);
-    }
-    100% {
-      filter: drop-shadow(0 0 1px #00ff66)
-              drop-shadow(0 0 2px #00cc55);
-      transform: scale(1);
-    }
-  }
-
-  /* 🎉 TOP TITLE */
-  .top-title {
-    position: absolute;
-    top: 15px;
-    width: 100%;
-    text-align: center;
-    font-size: 56px;
-    font-family: 'Pacifico', cursive;
-    color: #000;
-    z-index: 10;
-    pointer-events: none;
-    display: none;
-
-    text-shadow:
-      0 0 1px #00ff66,
-      0 0 2px #00cc55,
-      0 0 4px #00aa44;
-
-    animation: neonPulse 3s infinite ease-in-out;
-  }
-
-  /* 🚆 TITLE */
-  .title {
-    font-size: 56px;
-    font-family: 'Pacifico', cursive;
-    color: #000;
-    margin-bottom: 20px;
-
-    text-shadow:
-      0 0 1px #00ff66,
-      0 0 2px #00cc55,
-      0 0 4px #00aa44;
-
-    animation: neonPulse 3s infinite ease-in-out;
-  }
-
-  /* 🔒 LOCK */
+  /* 🔒 LOCK FULL SCREEN */
   #lockScreen {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.85);
+    width: 100vw;
+    height: 100vh;
+    background: #000;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -133,6 +85,7 @@
     font-size: 22px;
     cursor: pointer;
     background: transparent;
+    touch-action: none;
   }
 
   /* 🚀 CONTENT */
@@ -145,34 +98,52 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 15px;
+  }
+
+  .title {
+    font-size: 54px;
+    font-family: 'Pacifico', cursive;
+    text-shadow: 0 0 4px #00cc55;
+    margin-bottom: 20px;
   }
 
   .section-label {
     font-size: 18px;
     color: #ddd;
-    margin: 8px 0;
+    margin: 10px 0;
   }
 
   .timer-main {
     font-size: 22px;
     color: #66ffcc;
-    text-shadow: 0 0 6px #00ff88;
   }
 
   .timer-detail {
     font-size: 16px;
     color: #33ff99;
-    text-shadow: 0 0 4px #00ff88;
   }
 
   .timer-main-strong {
     font-size: 20px;
     color: #00ff00;
-    text-shadow: 0 0 8px #00ff00;
   }
 
-  /* ✨ EMOTKI */
+  /* 🎉 TOP */
+  .top-title {
+    position: absolute;
+    top: 15px;
+    width: 100%;
+    text-align: center;
+    font-size: 56px;
+    font-family: 'Pacifico', cursive;
+    color: #ffffff;
+    z-index: 10;
+    display: none;
+
+    text-shadow: 0 0 3px #00cc55;
+  }
+
+  /* 🌿 EMOTKI */
   .particle {
     position: fixed;
     pointer-events: none;
@@ -184,27 +155,22 @@
     from { transform: translate(0,0); opacity: 0.2; }
     to { transform: translate(var(--x), var(--y)); opacity: 0; }
   }
-
-  @media (max-width: 600px) {
-    .title { font-size: 38px; }
-    .top-title { font-size: 34px; }
-  }
 </style>
 </head>
 
 <body>
 
-<div class="top-title" id="topTitle">Majówka 2026</div>
-
 <div id="lockScreen">
   <div class="ready-text">Gotowa?</div>
-  <div id="lockText">Przeciągnij mnie w prawo ➡️</div>
+  <div id="lockText">Przeciągnij w prawo ➡️</div>
 
   <div class="slider" id="slider">
     <div class="fill" id="fill"></div>
     <div class="handle" id="handle">➡️</div>
   </div>
 </div>
+
+<div class="top-title" id="topTitle">Majówka 2026</div>
 
 <div class="content" id="content">
 
@@ -221,89 +187,95 @@
 </div>
 
 <script>
-  const busDate = new Date(2026, 3, 28, 23, 55);
-  const targetDate = new Date(2026, 3, 29, 10, 30);
+const busDate = new Date(2026, 3, 28, 23, 55);
+const targetDate = new Date(2026, 3, 29, 10, 30);
 
-  function updateTimer(target, mainId, detailId) {
-    const now = new Date();
-    const diff = target - now;
+/* ⏱️ TIMER */
+function updateTimer(target, mainId, detailId) {
+  const now = new Date();
+  const diff = target - now;
 
-    const totalMinutes = Math.floor(diff / 1000 / 60);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
+  const hours = Math.floor(diff / 1000 / 60 / 60);
+  const minutes = Math.floor(diff / 1000 / 60 % 60);
 
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const remHours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const remMinutes = Math.floor((diff / (1000 * 60)) % 60);
-    const remSeconds = Math.floor((diff / 1000) % 60);
+  const days = Math.floor(diff / 1000 / 60 / 60 / 24);
+  const remHours = Math.floor(diff / 1000 / 60 / 60 % 24);
+  const remMinutes = Math.floor(diff / 1000 / 60 % 60);
+  const remSeconds = Math.floor(diff / 1000 % 60);
 
-    document.getElementById(mainId).innerText =
-      `Zostało ${hours} godzin i ${minutes} minut`;
+  document.getElementById(mainId).innerText =
+    `Zostało ${hours}h ${minutes}m`;
 
-    document.getElementById(detailId).innerText =
-      `Zostało ${days} dni, ${remHours}h ${remMinutes}min ${remSeconds}s`;
-  }
+  document.getElementById(detailId).innerText =
+    `${days} dni ${remHours}h ${remMinutes}m ${remSeconds}s`;
+}
 
-  setInterval(updateTimer, 1000, busDate, "busMain", "busDetail");
-  setInterval(updateTimer, 1000, targetDate, "timerMain", "timerDetail");
+setInterval(() => {
+  updateTimer(busDate, "busMain", "busDetail");
+  updateTimer(targetDate, "timerMain", "timerDetail");
+}, 1000);
 
-  const handle = document.getElementById("handle");
-  const slider = document.getElementById("slider");
-  const lock = document.getElementById("lockScreen");
-  const content = document.getElementById("content");
-  const topTitle = document.getElementById("topTitle");
+/* 🔒 SLIDER FIX (MOBILE + DESKTOP) */
+const handle = document.getElementById("handle");
+const slider = document.getElementById("slider");
+const fill = document.getElementById("fill");
 
-  let dragging = false;
+const lock = document.getElementById("lockScreen");
+const content = document.getElementById("content");
+const topTitle = document.getElementById("topTitle");
 
-  handle.addEventListener("mousedown", () => dragging = true);
-  document.addEventListener("mouseup", () => dragging = false);
-  document.addEventListener("mousemove", move);
+let dragging = false;
 
-  function show() {
+handle.addEventListener("pointerdown", (e) => {
+  dragging = true;
+  handle.setPointerCapture(e.pointerId);
+});
+
+handle.addEventListener("pointerup", () => dragging = false);
+handle.addEventListener("pointercancel", () => dragging = false);
+
+handle.addEventListener("pointermove", (e) => {
+  if (!dragging) return;
+
+  const rect = slider.getBoundingClientRect();
+  let x = e.clientX - rect.left;
+
+  const max = slider.offsetWidth - handle.offsetWidth;
+
+  if (x < 0) x = 0;
+  if (x > max) x = max;
+
+  handle.style.left = x + "px";
+  fill.style.width = (x / max) * 100 + "%";
+
+  if (x >= max - 5) {
+    dragging = false;
     lock.style.display = "none";
     content.style.display = "flex";
     topTitle.style.display = "block";
   }
+});
 
-  function move(e) {
-    if (!dragging) return;
+/* 🌿 EMOTKI */
+const emojis = ["🚆","🚍","❤️","💖","🥰","🫶","✨","🌿"];
 
-    let x = e.clientX - slider.getBoundingClientRect().left;
-    let max = slider.offsetWidth - handle.offsetWidth;
+function spawn() {
+  const el = document.createElement("div");
+  el.className = "particle";
+  el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
 
-    if (x < 0) x = 0;
-    if (x > max) x = max;
+  el.style.fontSize = (16 + Math.random() * 16) + "px";
+  el.style.left = Math.random() * window.innerWidth + "px";
+  el.style.top = Math.random() * window.innerHeight + "px";
 
-    handle.style.left = x + "px";
-    fill.style.width = (x / max) * 100 + "%";
+  el.style.setProperty("--x", (Math.random() - 0.5) * 300 + "px");
+  el.style.setProperty("--y", (Math.random() - 0.5) * 300 + "px");
 
-    if (x >= max - 5) {
-      dragging = false;
-      show();
-    }
-  }
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 7000);
+}
 
-  // 🌿 EMOTKI
-  const emojis = ["🚆","🚍","❤️","💖","💕","🥰","💓","🫶","✨","🌿","🌸"];
-
-  function spawn() {
-    const el = document.createElement("div");
-    el.className = "particle";
-    el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-
-    el.style.fontSize = (16 + Math.random() * 16) + "px";
-
-    el.style.left = Math.random() * window.innerWidth + "px";
-    el.style.top = Math.random() * window.innerHeight + "px";
-
-    el.style.setProperty("--x", (Math.random() - 0.5) * 300 + "px");
-    el.style.setProperty("--y", (Math.random() - 0.5) * 300 + "px");
-
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 7000);
-  }
-
-  setInterval(spawn, 90);
+setInterval(spawn, 100);
 </script>
 
 </body>
