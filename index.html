@@ -16,9 +16,30 @@
     justify-content: center;
     align-items: center;
 
-    background: linear-gradient(135deg, #000000, #2f2f2f);
+    /* 🌫️ bardziej szary gradient */
+    background: linear-gradient(135deg, #0a0a0a, #3a3a3a, #1f1f1f);
     color: white;
     text-align: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* 🎈 emoji tło */
+  .emoji {
+    position: absolute;
+    font-size: 24px;
+    opacity: 0.15;
+    animation: floatUp linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes floatUp {
+    from {
+      transform: translateY(100vh) rotate(0deg);
+    }
+    to {
+      transform: translateY(-10vh) rotate(360deg);
+    }
   }
 
   .title {
@@ -27,22 +48,43 @@
     color: black;
     -webkit-text-stroke: 2px white;
     margin-bottom: 20px;
+    z-index: 2;
   }
 
-  .subtitle {
+  .section-label {
     font-size: 18px;
-    font-weight: 300;
-    margin-bottom: 25px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     color: #dddddd;
-    letter-spacing: 1px;
+    z-index: 2;
   }
 
+  /* 🚍 górny licznik */
+  .timer-main-strong {
+    font-size: 26px;
+    color: #00ff00;
+    -webkit-text-stroke: 1px white;
+    text-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00;
+    z-index: 2;
+  }
+
+  .timer-detail-strong {
+    font-size: 18px;
+    color: #00ff00;
+    -webkit-text-stroke: 0.5px white;
+    text-shadow: 0 0 10px #00ff00;
+    margin-bottom: 25px;
+    z-index: 2;
+  }
+
+  /* 🟢 dolny licznik */
   .timer-main {
     font-size: 28px;
     color: #66ffcc;
     -webkit-text-stroke: 1px white;
     text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88;
     margin-bottom: 10px;
+    z-index: 2;
   }
 
   .timer-detail {
@@ -50,6 +92,7 @@
     color: #33ff99;
     -webkit-text-stroke: 0.5px white;
     text-shadow: 0 0 6px #00ff88;
+    z-index: 2;
   }
 </style>
 </head>
@@ -60,27 +103,25 @@
   Sanok ➡️➡️➡️➡️ Olsztyn
 </div>
 
-<div class="subtitle">
-  [ pozostało do spotkanka ]
-</div>
+<div class="section-label">Do autobusiku zostało</div>
+<div class="timer-main-strong" id="busMain"></div>
+<div class="timer-detail-strong" id="busDetail"></div>
 
-<div class="timer-main" id="timerMain">
-  Ładowanie...
-</div>
-
-<div class="timer-detail" id="timerDetail">
-</div>
+<div class="section-label">[ pozostało do spotkanka ]</div>
+<div class="timer-main" id="timerMain"></div>
+<div class="timer-detail" id="timerDetail"></div>
 
 <script>
+  const busDate = new Date(2026, 3, 28, 23, 55);
   const targetDate = new Date(2026, 3, 29, 10, 30);
 
-  function updateTimer() {
+  function updateTimer(target, mainId, detailId) {
     const now = new Date();
-    const diff = targetDate - now;
+    const diff = target - now;
 
     if (diff <= 0) {
-      document.getElementById("timerMain").innerText = "Czas minął!";
-      document.getElementById("timerDetail").innerText = "";
+      document.getElementById(mainId).innerText = "Czas minął!";
+      document.getElementById(detailId).innerText = "";
       return;
     }
 
@@ -91,17 +132,43 @@
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const remHours = Math.floor((diff / (1000 * 60 * 60)) % 24);
     const remMinutes = Math.floor((diff / (1000 * 60)) % 60);
-    const remSeconds = Math.floor((diff / 1000) % 60); // 🔥 sekundy
+    const remSeconds = Math.floor((diff / 1000) % 60);
 
-    document.getElementById("timerMain").innerText =
+    document.getElementById(mainId).innerText =
       `Zostało ${hours} godzin i ${minutes} minut`;
 
-    document.getElementById("timerDetail").innerText =
+    document.getElementById(detailId).innerText =
       `Zostało ${days} dni, ${remHours}h ${remMinutes}min ${remSeconds}s`;
   }
 
-  updateTimer();
-  setInterval(updateTimer, 1000);
+  function updateAll() {
+    updateTimer(busDate, "busMain", "busDetail");
+    updateTimer(targetDate, "timerMain", "timerDetail");
+  }
+
+  updateAll();
+  setInterval(updateAll, 1000);
+
+  // 🎈 LOSOWE EMOJI W TLE
+  const emojis = ["🚆", "🚍", "❤️", "💖", "💕"];
+
+  function spawnEmoji() {
+    const el = document.createElement("div");
+    el.classList.add("emoji");
+    el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.fontSize = (20 + Math.random() * 30) + "px";
+    el.style.animationDuration = (6 + Math.random() * 10) + "s";
+
+    document.body.appendChild(el);
+
+    setTimeout(() => {
+      el.remove();
+    }, 15000);
+  }
+
+  setInterval(spawnEmoji, 400);
 </script>
 
 </body>
