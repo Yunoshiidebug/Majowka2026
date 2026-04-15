@@ -16,30 +16,27 @@
     justify-content: center;
     align-items: center;
 
-    /* 🌫️ bardziej szary gradient */
-    background: linear-gradient(135deg, #0a0a0a, #3a3a3a, #1f1f1f);
+    background: url("https://i.imgur.com/xju9V1k.jpeg") center/cover no-repeat;
     color: white;
     text-align: center;
     overflow: hidden;
     position: relative;
   }
 
-  /* 🎈 emoji tło */
-  .emoji {
+  /* 🌫️ przyciemnienie tła */
+  body::before {
+    content: "";
     position: absolute;
-    font-size: 24px;
-    opacity: 0.15;
-    animation: floatUp linear infinite;
-    pointer-events: none;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 0;
   }
 
-  @keyframes floatUp {
-    from {
-      transform: translateY(100vh) rotate(0deg);
-    }
-    to {
-      transform: translateY(-10vh) rotate(360deg);
-    }
+  /* wszystko nad tłem */
+  .title, .section-label, .timer-main, .timer-detail,
+  .timer-main-strong, .timer-detail-strong {
+    position: relative;
+    z-index: 2;
   }
 
   .title {
@@ -48,24 +45,20 @@
     color: black;
     -webkit-text-stroke: 2px white;
     margin-bottom: 20px;
-    z-index: 2;
   }
 
   .section-label {
     font-size: 18px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 10px 0;
     color: #dddddd;
-    z-index: 2;
   }
 
-  /* 🚍 górny licznik */
+  /* 🚍 górny licznik (autobus) */
   .timer-main-strong {
     font-size: 26px;
     color: #00ff00;
     -webkit-text-stroke: 1px white;
     text-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00;
-    z-index: 2;
   }
 
   .timer-detail-strong {
@@ -74,7 +67,6 @@
     -webkit-text-stroke: 0.5px white;
     text-shadow: 0 0 10px #00ff00;
     margin-bottom: 25px;
-    z-index: 2;
   }
 
   /* 🟢 dolny licznik */
@@ -84,7 +76,6 @@
     -webkit-text-stroke: 1px white;
     text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88;
     margin-bottom: 10px;
-    z-index: 2;
   }
 
   .timer-detail {
@@ -92,7 +83,25 @@
     color: #33ff99;
     -webkit-text-stroke: 0.5px white;
     text-shadow: 0 0 6px #00ff88;
-    z-index: 2;
+  }
+
+  /* 🎈 emoji */
+  .emoji {
+    position: absolute;
+    opacity: 0.18;
+    animation: floatUp linear forwards;
+    pointer-events: none;
+    bottom: -50px;
+    z-index: 1;
+  }
+
+  @keyframes floatUp {
+    from {
+      transform: translateY(0) rotate(0deg);
+    }
+    to {
+      transform: translateY(-120vh) rotate(360deg);
+    }
   }
 </style>
 </head>
@@ -112,7 +121,10 @@
 <div class="timer-detail" id="timerDetail"></div>
 
 <script>
+  // 🚍 autobus
   const busDate = new Date(2026, 3, 28, 23, 55);
+
+  // 🎯 spotkanie
   const targetDate = new Date(2026, 3, 29, 10, 30);
 
   function updateTimer(target, mainId, detailId) {
@@ -149,26 +161,28 @@
   updateAll();
   setInterval(updateAll, 1000);
 
-  // 🎈 LOSOWE EMOJI W TLE
-  const emojis = ["🚆", "🚍", "❤️", "💖", "💕"];
+  // 🎈 emoji generator
+  const emojis = ["🚆", "🚍", "❤️", "💖", "💕", "🥰", "💓", "🫶"];
 
   function spawnEmoji() {
     const el = document.createElement("div");
     el.classList.add("emoji");
+
     el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
 
     el.style.left = Math.random() * 100 + "vw";
-    el.style.fontSize = (20 + Math.random() * 30) + "px";
+    el.style.fontSize = (18 + Math.random() * 45) + "px";
     el.style.animationDuration = (6 + Math.random() * 10) + "s";
+    el.style.opacity = 0.12 + Math.random() * 0.25;
 
     document.body.appendChild(el);
 
     setTimeout(() => {
       el.remove();
-    }, 15000);
+    }, 17000);
   }
 
-  setInterval(spawnEmoji, 400);
+  setInterval(spawnEmoji, 180);
 </script>
 
 </body>
